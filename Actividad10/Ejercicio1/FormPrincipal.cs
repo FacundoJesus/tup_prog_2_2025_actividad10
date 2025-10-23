@@ -15,17 +15,18 @@ namespace Ejercicio1
         {
             openFileDialog1.Filter = "(csv)|*.csv";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {  
+            {
                 string path = openFileDialog1.FileName;
                 FileStream fs = null;
                 try
                 {
-                    fs = new FileStream(path,FileMode.Open,FileAccess.Read);
+                    fs = new FileStream(path, FileMode.Open, FileAccess.Read);
                     centro.ImportarCSVSolicitudesEntrantes(fs);
 
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message,"ERROR",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -42,11 +43,50 @@ namespace Ejercicio1
 
             LinkedListNode<Solicitud> nodo = centro.GetSolicitudPendiente();
 
-            while(nodo != null)
+            while (nodo != null)
             {
                 lsbVerSolicitudesImportadas.Items.Add(nodo.Value);
                 nodo = nodo.Next;
             }
-        } 
+        }
+
+        protected void VerSolicitudesAAtender()
+        {
+            lsbColaSolicitudesAAtender.Items.Clear();
+
+            lsbColaSolicitudesAAtender.Items.AddRange(centro.VerDescripcionColaAtencion());
+        }
+
+        private void btnConfirmarAtencion_Click(object sender, EventArgs e)
+        {
+            Solicitud solSeleccionada = lsbVerSolicitudesImportadas.SelectedItem as Solicitud;
+            if (solSeleccionada != null)
+            {
+                centro.Atender(solSeleccionada);
+                VerSolicitudesPendientes();
+                VerSolicitudesAAtender();
+
+                lsbVerSolicitudesImportadas.SelectedItem = null;
+                lbSolicitudSeleccionada.Text = solSeleccionada.ToString();
+            }
+            else
+            {
+                MessageBox.Show("Debes seleccionar una solicitud de la lista.");
+            }
+
+        }
+
+        private void lsbVerSolicitudesImportadas_SelectedValueChanged(object sender, EventArgs e)
+        {
+            Solicitud solSeleccionada = lsbVerSolicitudesImportadas.SelectedItem as Solicitud;
+            if(solSeleccionada != null)
+            {
+                lbSolicitudSeleccionada.Text = solSeleccionada.ToString();
+            }
+            else
+            {
+                MessageBox.Show("Debes seleccionar una solicitud de la lista.");
+            }
+        }
     }
 }
