@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            btnResolverSolicitud = new Button();
             lsbColaSolicitudesAAtender = new ListBox();
             label3 = new Label();
             lbSolicitudSeleccionada = new Label();
@@ -42,7 +43,6 @@
             lsbHistorialResoluciones = new ListBox();
             btnExportarSolicitudes = new Button();
             label4 = new Label();
-            btnResolverSolicitud = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -63,6 +63,16 @@
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Atencion de Solicitudes";
+            // 
+            // btnResolverSolicitud
+            // 
+            btnResolverSolicitud.Location = new Point(622, 205);
+            btnResolverSolicitud.Name = "btnResolverSolicitud";
+            btnResolverSolicitud.Size = new Size(136, 74);
+            btnResolverSolicitud.TabIndex = 7;
+            btnResolverSolicitud.Text = "Resolver Solicitud";
+            btnResolverSolicitud.UseVisualStyleBackColor = true;
+            btnResolverSolicitud.Click += btnResolverSolicitud_Click;
             // 
             // lsbColaSolicitudesAAtender
             // 
@@ -145,7 +155,7 @@
             groupBox2.Controls.Add(label4);
             groupBox2.Location = new Point(787, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(245, 292);
+            groupBox2.Size = new Size(445, 292);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Historial de Resoluciones";
@@ -158,7 +168,7 @@
             lsbHistorialResoluciones.Location = new Point(6, 110);
             lsbHistorialResoluciones.Name = "lsbHistorialResoluciones";
             lsbHistorialResoluciones.ScrollAlwaysVisible = true;
-            lsbHistorialResoluciones.Size = new Size(231, 169);
+            lsbHistorialResoluciones.Size = new Size(433, 169);
             lsbHistorialResoluciones.TabIndex = 8;
             // 
             // btnExportarSolicitudes
@@ -169,6 +179,7 @@
             btnExportarSolicitudes.TabIndex = 7;
             btnExportarSolicitudes.Text = "Exportar Solicitudes";
             btnExportarSolicitudes.UseVisualStyleBackColor = true;
+            btnExportarSolicitudes.Click += btnExportarSolicitudes_Click;
             // 
             // label4
             // 
@@ -179,20 +190,11 @@
             label4.TabIndex = 7;
             label4.Text = "Pila de Resoluciones:";
             // 
-            // btnResolverSolicitud
-            // 
-            btnResolverSolicitud.Location = new Point(622, 205);
-            btnResolverSolicitud.Name = "btnResolverSolicitud";
-            btnResolverSolicitud.Size = new Size(136, 74);
-            btnResolverSolicitud.TabIndex = 7;
-            btnResolverSolicitud.Text = "Resolver Solicitud";
-            btnResolverSolicitud.UseVisualStyleBackColor = true;
-            // 
             // FormPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1045, 317);
+            ClientSize = new Size(1244, 317);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -200,6 +202,8 @@
             Name = "FormPrincipal";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Actividad 10";
+            FormClosing += FormPrincipal_FormClosing;
+            Load += FormPrincipal_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);

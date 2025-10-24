@@ -36,17 +36,17 @@ namespace Ejercicio1.Models
             if (solicitudesPendientes.Remove(solicitud)== true) colaDeAtencion.Enqueue(solicitud);         
         }
 
-        public string ExportarCSVHistoriaDelResoluciones(FileStream fs)
+        public void ExportarCSVHistoriaDelResoluciones(FileStream fs)
         {
             StreamWriter sw = new StreamWriter(fs);
-            sw.WriteLine("Numero;Motivo");
-            string linea="";
-            foreach(Solicitud s in colaDeAtencion)
+            sw.WriteLine("Descripción Resolución;Número de Solicitud;Descripción Solicitud");
+          
+            foreach(Resolucion res in pilaHistorica)
             {
-                linea = s.Exportar();
-                return linea;
+                sw.WriteLine(res.Exportar());
             }
-            return linea;
+            sw.Close();
+
         }
 
         public LinkedListNode<Solicitud> GetSolicitudPendiente()
@@ -64,14 +64,28 @@ namespace Ejercicio1.Models
                 descripcion[i++] = s.ToString();
             }
             return descripcion;
-
+        }
+        
+        public void ResolverSolicitudEnEspera()
+        {
+            if(colaDeAtencion.Count > 0)
+            {
+                Solicitud solicitud = colaDeAtencion.Dequeue();
+                string descripcion = "Solucionado";
+                Resolucion resolucion = new Resolucion(descripcion, solicitud);
+                pilaHistorica.Push(resolucion);
+            } 
         }
 
-
-
-
-
-
-
+        public string[] VerDescripcionPilaHistorica()
+        {
+            string[] descripcion = new string[pilaHistorica.Count];
+            int i = 0;
+            foreach(Resolucion r in  pilaHistorica)
+            {
+                descripcion[i++] = r.ToString();
+            }
+            return descripcion;
+        }
     }
 }

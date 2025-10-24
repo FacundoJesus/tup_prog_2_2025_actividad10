@@ -26,7 +26,7 @@ namespace Ejercicio1
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "ERROR AL IMPORTAR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
@@ -79,7 +79,7 @@ namespace Ejercicio1
         private void lsbVerSolicitudesImportadas_SelectedValueChanged(object sender, EventArgs e)
         {
             Solicitud solSeleccionada = lsbVerSolicitudesImportadas.SelectedItem as Solicitud;
-            if(solSeleccionada != null)
+            if (solSeleccionada != null)
             {
                 lbSolicitudSeleccionada.Text = solSeleccionada.ToString();
             }
@@ -87,6 +87,60 @@ namespace Ejercicio1
             {
                 MessageBox.Show("Debes seleccionar una solicitud de la lista.");
             }
+        }
+
+        private void btnResolverSolicitud_Click(object sender, EventArgs e)
+        {
+            
+            centro.ResolverSolicitudEnEspera();
+
+            VerSolicitudesAAtender();
+
+            VerHitorialResoluciones();
+        }
+
+        protected void VerHitorialResoluciones()
+        {
+            lsbHistorialResoluciones.Items.Clear();
+
+            lsbHistorialResoluciones.Items.AddRange(centro.VerDescripcionPilaHistorica());
+        }
+
+        private void btnExportarSolicitudes_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "(csv)|*.csv";
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string path = saveFileDialog1.FileName;
+                FileStream fs = null;
+                try
+                {
+                    fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+                    centro.ExportarCSVHistoriaDelResoluciones(fs);
+
+                    MessageBox.Show("Exportado Satisfactoriamente!","Exportación",MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "ERROR AL EXPORTAR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    if (fs != null) fs.Close();
+                }
+            }
+
+        }
+
+        private void FormPrincipal_Load(object sender, EventArgs e)
+        {
+            //DESERALIZAR
+        }
+
+        private void FormPrincipal_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //SERIALIZAR
         }
     }
 }

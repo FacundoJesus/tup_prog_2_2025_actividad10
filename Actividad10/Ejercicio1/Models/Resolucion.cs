@@ -20,17 +20,22 @@ namespace Ejercicio1.Models
 
         public string Exportar()
         {
-            throw new NotImplementedException();
+            return $"{this.Descripcion};{this.Solicitud.Numero};{this.Solicitud.Motivo}";
         }
 
         public void Importar(string datos)
         {
-            throw new NotImplementedException();
+            string[] splitResult = datos.Split(';');
+
+            this.Descripcion = splitResult[0].Trim();
+            this.Solicitud.Numero = Convert.ToInt32(splitResult[1].Trim());
+            this.Solicitud.Motivo = splitResult[2].Trim();
         }
 
         public override string ToString()
         {
-            return $"";
+            return $"Resol. Nro: {this.Solicitud.Numero} - Motivo: {this.Solicitud.Motivo} - Descrip.: {this.Descripcion}";
+
         }
     }
 }

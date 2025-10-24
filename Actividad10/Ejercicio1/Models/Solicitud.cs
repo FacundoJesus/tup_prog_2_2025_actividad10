@@ -33,7 +33,7 @@ namespace Ejercicio1.Models
 
         public override string ToString()
         {
-            return $"{this.Numero} ({this.Motivo})";
+            return $"{this.Numero}({this.Motivo})";
         }
     }
 }
