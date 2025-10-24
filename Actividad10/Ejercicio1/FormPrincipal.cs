@@ -1,4 +1,6 @@
 using Ejercicio1.Models;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Authentication.ExtendedProtection;
 
 namespace Ejercicio1
 {
@@ -9,7 +11,43 @@ namespace Ejercicio1
             InitializeComponent();
         }
 
+        #region Defino e instancio la clase CentroDeAtencion (Servicio/Sistema)
         CentroDeAtencion centro = new CentroDeAtencion();
+        #endregion
+
+        #region ACTUALIZAR LISTBOX DE SOLICITUDES PENDIENTES
+        protected void VerSolicitudesPendientes()
+        {
+            lsbVerSolicitudesImportadas.Items.Clear();
+
+            LinkedListNode<Solicitud> nodo = centro.GetSolicitudPendiente();
+
+            while (nodo != null)
+            {
+                lsbVerSolicitudesImportadas.Items.Add(nodo.Value);
+                nodo = nodo.Next;
+            }
+        }
+        #endregion
+
+        #region ACTUALIZAR LISTBOX DE SOLICITUDES A ATENDER
+        protected void VerSolicitudesAAtender()
+        {
+            lsbColaSolicitudesAAtender.Items.Clear();
+
+            lsbColaSolicitudesAAtender.Items.AddRange(centro.VerDescripcionColaAtencion());
+        }
+        #endregion
+
+        #region ACTUALIZAR LISTBOX DE HISTORIAL DE RESOLUCIONES
+        protected void VerHitorialResoluciones()
+        {
+            lsbHistorialResoluciones.Items.Clear();
+
+            lsbHistorialResoluciones.Items.AddRange(centro.VerDescripcionPilaHistorica());
+        }
+        #endregion
+
 
         private void btnImportarSolicitudes_Click(object sender, EventArgs e)
         {
@@ -36,27 +74,6 @@ namespace Ejercicio1
                 VerSolicitudesPendientes();
             }
         }
-
-        protected void VerSolicitudesPendientes()
-        {
-            lsbVerSolicitudesImportadas.Items.Clear();
-
-            LinkedListNode<Solicitud> nodo = centro.GetSolicitudPendiente();
-
-            while (nodo != null)
-            {
-                lsbVerSolicitudesImportadas.Items.Add(nodo.Value);
-                nodo = nodo.Next;
-            }
-        }
-
-        protected void VerSolicitudesAAtender()
-        {
-            lsbColaSolicitudesAAtender.Items.Clear();
-
-            lsbColaSolicitudesAAtender.Items.AddRange(centro.VerDescripcionColaAtencion());
-        }
-
         private void btnConfirmarAtencion_Click(object sender, EventArgs e)
         {
             Solicitud solSeleccionada = lsbVerSolicitudesImportadas.SelectedItem as Solicitud;
@@ -99,13 +116,6 @@ namespace Ejercicio1
             VerHitorialResoluciones();
         }
 
-        protected void VerHitorialResoluciones()
-        {
-            lsbHistorialResoluciones.Items.Clear();
-
-            lsbHistorialResoluciones.Items.AddRange(centro.VerDescripcionPilaHistorica());
-        }
-
         private void btnExportarSolicitudes_Click(object sender, EventArgs e)
         {
             saveFileDialog1.Filter = "(csv)|*.csv";
@@ -133,14 +143,57 @@ namespace Ejercicio1
 
         }
 
+
+        #region SERIALIZACION Y DESERIALIZACION
         private void FormPrincipal_Load(object sender, EventArgs e)
         {
-            //DESERALIZAR
+            FileStream fs = null;
+            string path = "datos.dat";
+            if(File.Exists(path))
+            {
+                try
+                {
+                    fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+                    #pragma warning disable SYSLIB0011
+                    BinaryFormatter bf = new BinaryFormatter();
+                    centro = bf.Deserialize(fs) as CentroDeAtencion;
+                    #pragma warning restore SYSLIB0011
+ 
+                }
+                catch(Exception ex) {
+                    MessageBox.Show(ex.Message,"ERROR AL SERIALIZAR LOS DATOS",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                }finally
+                {
+                    if (fs != null) fs.Close();
+                }
+
+                VerSolicitudesPendientes();
+                VerSolicitudesAAtender();
+                VerHitorialResoluciones();
+            } 
         }
 
         private void FormPrincipal_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //SERIALIZAR
+            FileStream fs = null;
+            string path = "datos.dat";
+            try
+            {
+                fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+                #pragma warning disable SYSLIB0011
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(fs,centro);
+                #pragma warning restore SYSLIB0011
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "ERROR AL DESERIALIZAR LOS DATOS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (fs != null) fs.Close();
+            }
         }
+        #endregion
     }
 }
