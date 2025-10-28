@@ -1,6 +1,7 @@
 using Ejercicio1.Models;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Authentication.ExtendedProtection;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Ejercicio1
 {
@@ -143,43 +144,38 @@ namespace Ejercicio1
 
         }
 
-
+        
         #region SERIALIZACION Y DESERIALIZACION
         private void FormPrincipal_Load(object sender, EventArgs e)
         {
             FileStream fs = null;
-            string path = "datos.dat";
-            if(File.Exists(path))
+            try
             {
-                try
-                {
-                    fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-                    #pragma warning disable SYSLIB0011
-                    BinaryFormatter bf = new BinaryFormatter();
-                    centro = bf.Deserialize(fs) as CentroDeAtencion;
-                    #pragma warning restore SYSLIB0011
+                fs = new FileStream("datos.bin", FileMode.Open, FileAccess.Read);
+                #pragma warning disable SYSLIB0011
+                BinaryFormatter bf = new BinaryFormatter();
+                centro = bf.Deserialize(fs) as CentroDeAtencion;
+                #pragma warning restore SYSLIB0011
  
-                }
-                catch(Exception ex) {
-                    MessageBox.Show(ex.Message,"ERROR AL SERIALIZAR LOS DATOS",MessageBoxButtons.OK,MessageBoxIcon.Error);
-                }finally
-                {
-                    if (fs != null) fs.Close();
-                }
+            }
+            catch(Exception ex) {
+                MessageBox.Show(ex.Message,"ERROR AL DESERIALIZAR LOS DATOS",MessageBoxButtons.OK,MessageBoxIcon.Error);
+            }finally
+            {
+                if (fs != null) fs.Close();
+            }
 
-                VerSolicitudesPendientes();
-                VerSolicitudesAAtender();
-                VerHitorialResoluciones();
-            } 
+            VerSolicitudesPendientes();
+            VerSolicitudesAAtender();
+            VerHitorialResoluciones();
         }
 
         private void FormPrincipal_FormClosing(object sender, FormClosingEventArgs e)
         {
             FileStream fs = null;
-            string path = "datos.dat";
             try
             {
-                fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+                fs = new FileStream("datos.bin", FileMode.Create, FileAccess.Write);
                 #pragma warning disable SYSLIB0011
                 BinaryFormatter bf = new BinaryFormatter();
                 bf.Serialize(fs,centro);
@@ -187,7 +183,7 @@ namespace Ejercicio1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "ERROR AL DESERIALIZAR LOS DATOS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "ERROR AL SERIALIZAR LOS DATOS", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -195,5 +191,6 @@ namespace Ejercicio1
             }
         }
         #endregion
+        
     }
 }
